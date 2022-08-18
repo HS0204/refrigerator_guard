@@ -1,10 +1,11 @@
 package com.hs.refrigerator_guard
 
 import android.media.MediaPlayer
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.view.animation.RotateAnimation
+import androidx.appcompat.app.AppCompatActivity
 import com.hs.refrigerator_guard.databinding.ActivityGameBinding
-import com.hs.refrigerator_guard.databinding.ActivityMainBinding
 
 class GameActivity : AppCompatActivity() {
 
@@ -17,6 +18,55 @@ class GameActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         musicStart()
+
+        var currentDegree = 0f
+        var toDegree = 0f
+
+        binding.leftRotateBtn?.setOnClickListener {
+            toDegree += 10f
+
+            val rotateAnimation = RotateAnimation(
+                currentDegree,
+                toDegree,
+                RotateAnimation.RELATIVE_TO_SELF,
+                .5f,
+                RotateAnimation.RELATIVE_TO_SELF,
+                .5f
+            )
+            rotateAnimation.duration = 300
+            rotateAnimation.fillAfter = true
+
+            binding.player?.startAnimation(rotateAnimation)
+
+            val location = IntArray(2)
+            binding.player?.getLocationOnScreen(location)
+
+            currentDegree += 10f
+            Log.d("TEST", "현재 각도는 $currentDegree, 이동할 각도는 $toDegree")
+            Log.d("TEST", "좌표 (${location[0]}, ${location[1]})")
+        }
+
+        binding.rightRotateBtn?.setOnClickListener {
+            toDegree -= 10f
+
+            val rotateAnimation = RotateAnimation(
+                currentDegree,
+                toDegree,
+                RotateAnimation.RELATIVE_TO_SELF,
+                .5f,
+                RotateAnimation.RELATIVE_TO_SELF,
+                .5f
+            )
+            rotateAnimation.duration = 300
+            rotateAnimation.fillAfter = true
+
+            binding.player?.startAnimation(rotateAnimation)
+
+            currentDegree -= 10f
+            Log.d("TEST", "현재 각도는 $currentDegree, 이동할 각도는 $toDegree")
+            Log.d("TEST", "좌표 (${binding.player?.x}, ${binding.player?.y})")
+        }
+
     }
 
 

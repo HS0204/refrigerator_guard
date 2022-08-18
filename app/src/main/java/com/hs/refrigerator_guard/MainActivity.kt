@@ -46,6 +46,12 @@ class MainActivity : AppCompatActivity() {
         startMediaPlayer.release()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        startMediaPlayer.stop()
+        startMediaPlayer.release()
+    }
+
     private fun musicStart() {
         startMediaPlayer = MediaPlayer.create(this, R.raw.start_music)
         startMediaPlayer.start()
