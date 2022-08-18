@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Refrigerator Guard</string>
+
+    <string name="game_title">냉장고 수호대</string>
+    <string name="game_explain">잠에서 깨어난 친구들이 냉장고로 돌진합니다\n 배고픈 친구들에게 간식을 나눠주며 냉장고를 지키세요</string>
+
+    <string name="start_btn">게임 시작</string>
+    <string name="restart_btn">재도전</string>
+    <string name="end_btn">게임 종료</string>
+</resources>
