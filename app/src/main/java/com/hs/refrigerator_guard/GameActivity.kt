@@ -1,74 +1,63 @@
 package com.hs.refrigerator_guard
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Point
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
+import android.view.MotionEvent
+import android.view.WindowManager
 import android.view.animation.RotateAnimation
 import androidx.appcompat.app.AppCompatActivity
+import com.hs.refrigerator_guard.UI.GameView
 import com.hs.refrigerator_guard.databinding.ActivityGameBinding
+import kotlin.concurrent.thread
+
+var windowX = 0
+var windowY = 0
 
 class GameActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityGameBinding.inflate(layoutInflater) }
 
     private lateinit var gameMediaPlayer: MediaPlayer
+    private lateinit var gameView: GameView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
         musicStart()
+        getWindowSize()
 
-        var currentDegree = 0f
-        var toDegree = 0f
+        gameView = GameView(this)
 
-        binding.leftRotateBtn?.setOnClickListener {
-            toDegree += 10f
+        gameView.createBackGround(width = windowX, height = windowY, 0, 0)
+        gameView.createShooter(windowX/2 - 60, windowY/2 + 30)
 
-            val rotateAnimation = RotateAnimation(
-                currentDegree,
-                toDegree,
-                RotateAnimation.RELATIVE_TO_SELF,
-                .5f,
-                RotateAnimation.RELATIVE_TO_SELF,
-                .5f
-            )
-            rotateAnimation.duration = 300
-            rotateAnimation.fillAfter = true
-
-            binding.player?.startAnimation(rotateAnimation)
-
-            val location = IntArray(2)
-            binding.player?.getLocationOnScreen(location)
-
-            currentDegree += 10f
-            Log.d("TEST", "현재 각도는 $currentDegree, 이동할 각도는 $toDegree")
-            Log.d("TEST", "좌표 (${location[0]}, ${location[1]})")
-        }
-
-        binding.rightRotateBtn?.setOnClickListener {
-            toDegree -= 10f
-
-            val rotateAnimation = RotateAnimation(
-                currentDegree,
-                toDegree,
-                RotateAnimation.RELATIVE_TO_SELF,
-                .5f,
-                RotateAnimation.RELATIVE_TO_SELF,
-                .5f
-            )
-            rotateAnimation.duration = 300
-            rotateAnimation.fillAfter = true
-
-            binding.player?.startAnimation(rotateAnimation)
-
-            currentDegree -= 10f
-            Log.d("TEST", "현재 각도는 $currentDegree, 이동할 각도는 $toDegree")
-            Log.d("TEST", "좌표 (${binding.player?.x}, ${binding.player?.y})")
-        }
+        setContentView(gameView)
 
     }
 
+    private fun getWindowSize() {
+        val point = Point()
+        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        windowManager.defaultDisplay.getSize(point)
+
+        windowX = point.x
+        windowY = point.y
+    }
+
+    override fun onResume() {
+        super.onResume()
+        gameView.resume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        gameView.pause()
+    }
 
     override fun onStop() {
         super.onStop()

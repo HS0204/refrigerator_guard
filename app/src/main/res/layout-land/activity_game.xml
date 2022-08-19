@@ -42,7 +42,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:background="@color/black"
-            android:src="@drawable/character_player" />
+            android:src="@drawable/shooter" />
 
     </GridLayout>
 
