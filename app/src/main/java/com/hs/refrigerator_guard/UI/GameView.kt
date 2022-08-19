@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.SurfaceView
 import com.hs.refrigerator_guard.windowX
+import kotlin.math.log
 
 @SuppressLint("ViewConstructor")
 class GameView(context: Context): SurfaceView(context), Runnable {
@@ -23,16 +24,20 @@ class GameView(context: Context): SurfaceView(context), Runnable {
 
     var toDegree = 0f
 
+    private lateinit var foods: ArrayList<Food>
+
     fun createBackGround(width: Int, height: Int, coordinateX: Int, coordinateY: Int) {
-        background = Background()
-        background.makeBg(width, height, coordinateX, coordinateY, resources)
+        background = Background(width, height, coordinateX, coordinateY, resources)
     }
 
     fun createShooter(coordinateX: Int, coordinateY: Int) {
         x = coordinateX
         y = coordinateY
-        shooter = Shooter()
-        shooter.makeShooter(coordinateX, coordinateY, resources, degrees = toDegree)
+        shooter = Shooter(this, coordinateX, coordinateY, resources, degrees = toDegree)
+    }
+
+    fun createFoods() {
+        foods = ArrayList<Food>()
     }
 
     override fun run() {
@@ -49,11 +54,13 @@ class GameView(context: Context): SurfaceView(context), Runnable {
         if (event!!.x < windowX / 2 )  {
             Log.d("TEST", "왼쪽")
             toDegree += 20f
+            shooter.toShoot = true
             createShooter(x, y)
         }
         else {
             Log.d("TEST", "오른쪽")
             toDegree -= 20f
+            shooter.toShoot = true
             createShooter(x, y)
         }
 
@@ -61,7 +68,19 @@ class GameView(context: Context): SurfaceView(context), Runnable {
     }
 
     private fun update() {
+        val trash = ArrayList<Food>()
 
+        for (food in foods) {
+            if (food.x > windowX) {
+                trash.add(food)
+            }
+
+            food.x += 20
+        }
+
+        for (food in trash) {
+            foods.remove(food)
+        }
     }
 
     private fun draw() {
@@ -71,7 +90,11 @@ class GameView(context: Context): SurfaceView(context), Runnable {
 
             canvas.drawBitmap(background.bgImg, background.x.toFloat(), background.y.toFloat(), paint)
 
-            canvas.drawBitmap(shooter.shooterImg, shooter.x.toFloat(), shooter.y.toFloat(), paint)
+            canvas.drawBitmap(shooter.shooting(), shooter.x.toFloat(), shooter.y.toFloat(), paint)
+
+            for (food in foods) {
+                canvas.drawBitmap(food.foodImg, food.x.toFloat(), food.y.toFloat(), paint)
+            }
 
             holder.unlockCanvasAndPost(canvas)
         }
@@ -100,6 +123,14 @@ class GameView(context: Context): SurfaceView(context), Runnable {
         } catch (e: InterruptedException) {
             e.printStackTrace()
         }
+    }
+
+    fun newFood() {
+        val food = Food(resources, 0f)
+        food.x = shooter.x + 30
+        food.y = shooter.y + 20
+
+        foods.add(food)
     }
 
 }
