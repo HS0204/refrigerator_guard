@@ -1,18 +1,12 @@
 package com.hs.refrigerator_guard
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Point
 import android.media.MediaPlayer
 import android.os.Bundle
-import android.util.Log
-import android.view.MotionEvent
 import android.view.WindowManager
-import android.view.animation.RotateAnimation
 import androidx.appcompat.app.AppCompatActivity
 import com.hs.refrigerator_guard.UI.GameView
 import com.hs.refrigerator_guard.databinding.ActivityGameBinding
-import kotlin.concurrent.thread
 
 var windowX = 0
 var windowY = 0
@@ -32,6 +26,8 @@ class GameActivity : AppCompatActivity() {
         getWindowSize()
 
         gameView = GameView(this)
+
+        feedingCount = 0
 
         gameView.createBackGround(width = windowX, height = windowY, 0, 0)
         gameView.createShooter(windowX/2 - 60, windowY/2 + 30)

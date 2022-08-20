@@ -10,7 +10,7 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.SurfaceView
 import com.hs.refrigerator_guard.EndingActivity
-import com.hs.refrigerator_guard.count
+import com.hs.refrigerator_guard.feedingCount
 import com.hs.refrigerator_guard.timer
 import com.hs.refrigerator_guard.windowX
 import java.lang.Exception
@@ -82,8 +82,9 @@ class GameView(context: Context): SurfaceView(context), Runnable {
     val timerHandler = Handler()
 
     fun countPlayTime() {
-        timer = 0
         Thread{
+            timer = 0
+
             timerHandler.postDelayed(object : Runnable {
                 override fun run() {
                     try {
@@ -107,6 +108,7 @@ class GameView(context: Context): SurfaceView(context), Runnable {
         if (!isPlaying) {
             val intent = Intent(context, EndingActivity::class.java)
             context.startActivity(intent)
+            timerHandler.removeMessages(0)
         }
     }
 
@@ -189,7 +191,7 @@ class GameView(context: Context): SurfaceView(context), Runnable {
     private fun eating(enemy: Enemy) {
         for (food in foods) {
             if (Rect.intersects(enemy.getShape(), food.getShape())) {
-                count++
+                feedingCount++
                 trashFood.add(food)
                 trashEnemy.add(enemy)
             }
