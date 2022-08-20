@@ -3,7 +3,7 @@
 
     <string name="game_title">냉장고 수호대</string>
     <string name="game_explain">잠에서 깨어난 친구들이 냉장고로 돌진합니다\n 배고픈 친구들에게 간식을 나눠주며 냉장고를 지키세요</string>
-    <string name="game_over">하지만 냉장고 텅텅! 다 털려버렸군요!\n 오늘부터 굶어야 합니다…</string>
+    <string name="game_over">하지만 냉장고는 텅텅! 다 털려버렸군요!\n …오늘부터 굶어야 합니다…</string>
 
     <string name="score">간식을 먹인 친구 수 N</string>
     <string name="play_time">냉장고 사수 시간 NN:NN</string>
