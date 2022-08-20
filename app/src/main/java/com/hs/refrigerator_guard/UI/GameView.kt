@@ -5,7 +5,7 @@ import android.content.Context
 import android.graphics.Paint
 import android.graphics.Rect
 import android.os.Handler
-import android.provider.SyncStateContract.Helpers.update
+import android.system.Os.remove
 import android.util.Log
 import android.view.MotionEvent
 import android.view.SurfaceView
@@ -17,7 +17,6 @@ import kotlin.random.Random
 class GameView(context: Context): SurfaceView(context), Runnable {
 
     private lateinit var thread: Thread
-    private lateinit var enemyThread: Thread
 
     private var isPlaying: Boolean = false
     private lateinit var paint: Paint
@@ -35,6 +34,10 @@ class GameView(context: Context): SurfaceView(context), Runnable {
 
     val enemyHandler = Handler()
     var rnd = Random
+
+    lateinit var target: Enemy
+    val trashFood = ArrayList<Food>()
+    val trashEnemy = ArrayList<Enemy>()
 
     fun createBackGround(width: Int, height: Int, coordinateX: Int, coordinateY: Int) {
         background = Background(width, height, coordinateX, coordinateY, resources)
@@ -57,7 +60,7 @@ class GameView(context: Context): SurfaceView(context), Runnable {
             override fun run() {
                 try {
                     newEnemy()
-                    enemyHandler.postDelayed(this, 1000)
+                    enemyHandler.postDelayed(this, 1000) /*** 적군 리스폰 속도 ***/
                 } catch (e: Exception) {
                     }
             }
@@ -92,64 +95,73 @@ class GameView(context: Context): SurfaceView(context), Runnable {
     }
 
     private fun update() {
-        shootingFood()
+        shootingFood(enemies)
         runningEnemy()
+        remove()
     }
 
-    private fun shootingFood() {
-        val trash = ArrayList<Food>()
+    private fun shootingFood(enemies: ArrayList<Enemy>) {
+        if (enemies.size > 0)
+            target = enemies[0]
 
         for (food in foods) {
-            if (food.x > windowX) {
-                trash.add(food)
-            }
+            food.speed = rnd.nextInt(5, 7) /*** 슈팅 속도 ***/
 
-            food.x += 20
-        }
+            if (food.x > windowX)
+                trashFood.add(food)
 
-        for (food in trash) {
-            foods.remove(food)
+            if (food.x > target.x)
+                food.x -= food.speed
+            if (food.x < target.x)
+                food.x += food.speed
+
+            if (food.y > target.y)
+                food.y -= food.speed
+            if (food.y < target.y)
+                food.y += food.speed
         }
     }
 
     private fun runningEnemy() {
-        val trashEnemy = ArrayList<Enemy>()
-
         for (enemy in enemies) {
-            enemy.speed = rnd.nextInt(5, 10)
+            enemy.speed = rnd.nextInt(10, 13) /*** 적군 속도 ***/
             movingEnemy(enemy, enemy.x, enemy.y)
 
-            if (enemy.y < 0) {
+            if (enemy.y < 0)
                 trashEnemy.add(enemy)
-            }
 
             eating(enemy)
-        }
-
-        for (enemy in trashEnemy) {
-            enemies.remove(enemy)
         }
     }
 
     private fun movingEnemy(enemy: Enemy, currentX: Int, currentY: Int) {
-        if (currentY < 800 && currentX < 1500) {
+        if (currentY < 0)
+            trashEnemy.add(enemy)
+
+        if (currentY < 800 && currentX < 1500)
             enemy.y += enemy.speed
-        }
-        if (currentY >= 800 && currentX < 1700) {
+        if (currentY >= 800 && currentX < 1700)
             enemy.x += enemy.speed
-        }
-        if (currentX >= 1700) {
+        if (currentX >= 1700)
             enemy.y -= enemy.speed
-        }
     }
 
     private fun eating(enemy: Enemy) {
         for (food in foods) {
             if (Rect.intersects(enemy.getShape(), food.getShape())) {
+                trashFood.add(food)
                 enemy.y = -1
-                food.x = windowX + 1
+                //food.x = windowX + 1
             }
         }
+    }
+
+    private fun remove() {
+        for (food in trashFood)
+            foods.remove(food)
+
+        for (enemy in trashEnemy)
+            enemies.remove(enemy)
     }
 
     private fun draw() {
@@ -161,13 +173,11 @@ class GameView(context: Context): SurfaceView(context), Runnable {
 
             canvas.drawBitmap(shooter.shooting(), shooter.x.toFloat(), shooter.y.toFloat(), paint)
 
-            for (food in foods) {
+            for (food in foods)
                 canvas.drawBitmap(food.foodImg, food.x.toFloat(), food.y.toFloat(), paint)
-            }
 
-            for (enemy in enemies) {
+            for (enemy in enemies)
                 canvas.drawBitmap(enemy.enemyImg, enemy.x.toFloat(), enemy.y.toFloat(), paint)
-            }
 
             holder.unlockCanvasAndPost(canvas)
         }

@@ -16,6 +16,8 @@ class Food internal constructor(res: Resources) {
     var width: Int = 0
     var height: Int = 0
 
+    var speed: Int = 0
+
     var foodImg: Bitmap
 
     val foodList = arrayListOf<Int>(
