@@ -5,7 +5,9 @@ import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.ImageView
 import android.widget.Toast
+import com.bumptech.glide.Glide
 import com.hs.refrigerator_guard.databinding.ActivityMainBinding
 import java.lang.Thread.sleep
 import kotlin.system.exitProcess
@@ -31,6 +33,16 @@ class MainActivity : AppCompatActivity() {
             sleep(3000)
             System.exit(0)
         }
+
+        binding.mainCharacter?.let { Glide.with(this).load(R.drawable.start_main).into(it) }
+        binding.explainImgLeft?.let { Glide.with(this).load(R.drawable.start_food1).into(it) }
+        binding.explainImgRight?.let { Glide.with(this).load(R.drawable.start_food2).into(it) }
+        binding.start1?.let { Glide.with(this).load(R.drawable.start1).into(it) }
+        binding.start2?.let { Glide.with(this).load(R.drawable.start6).into(it) }
+        binding.start3?.let { Glide.with(this).load(R.drawable.start3).into(it) }
+        binding.start4?.let { Glide.with(this).load(R.drawable.start4).into(it) }
+        binding.start5?.let { Glide.with(this).load(R.drawable.start2).into(it) }
+        binding.start6?.let { Glide.with(this).load(R.drawable.start5).into(it) }
 
     }
 

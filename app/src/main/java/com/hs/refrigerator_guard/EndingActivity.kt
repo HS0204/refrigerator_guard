@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.core.util.TimeUtils.formatDuration
 import com.hs.refrigerator_guard.databinding.ActivityEndingBinding
 
 var timer: Int = 0
@@ -20,19 +21,9 @@ class EndingActivity : AppCompatActivity() {
     private lateinit var endMediaPlayer: MediaPlayer
     private lateinit var effectMediaPlayer: MediaPlayer
 
-    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-
-        binding.playTime!!.startAnimation(AnimationUtils.loadAnimation(this, R.anim.end_playtime))
-        binding.myScore!!.startAnimation(AnimationUtils.loadAnimation(this, R.anim.end_score))
-        binding.gameExplain!!.startAnimation(AnimationUtils.loadAnimation(this, R.anim.end_text))
-        binding.restartBtn!!.startAnimation(AnimationUtils.loadAnimation(this, R.anim.end_btn))
-        binding.endBtn!!.startAnimation(AnimationUtils.loadAnimation(this, R.anim.end_btn))
-
-        binding.playTime!!.text = "${formatDuration(timer)} 동안 냉장고를 지켰어요"
-        binding.myScore!!.text = "${feedingCount}마리의 친구에게 간식을 먹여줬어요"
 
         binding.restartBtn?.setOnClickListener {
             val intent = Intent(this, GameActivity::class.java)
@@ -48,16 +39,14 @@ class EndingActivity : AppCompatActivity() {
         }
     }
 
-    private fun formatDuration (duration: Int): String{
-        var min = duration / 60
-        val sec = duration % 60
-
-        return String.format("%d분 %d초", min, sec)
-    }
-
     override fun onStart() {
         super.onStart()
         musicStart()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        initializeLayout()
     }
 
     override fun onStop() {
@@ -72,6 +61,25 @@ class EndingActivity : AppCompatActivity() {
         endMediaPlayer.release()
         effectMediaPlayer.stop()
         effectMediaPlayer.release()
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun initializeLayout() {
+        binding.playTime!!.startAnimation(AnimationUtils.loadAnimation(this, R.anim.end_playtime))
+        binding.myScore!!.startAnimation(AnimationUtils.loadAnimation(this, R.anim.end_score))
+        binding.gameExplain!!.startAnimation(AnimationUtils.loadAnimation(this, R.anim.end_text))
+        binding.restartBtn!!.startAnimation(AnimationUtils.loadAnimation(this, R.anim.end_btn))
+        binding.endBtn!!.startAnimation(AnimationUtils.loadAnimation(this, R.anim.end_btn))
+
+        binding.playTime!!.text = "${formatDuration(timer)} 동안 냉장고를 지켰어요"
+        binding.myScore!!.text = "${feedingCount}마리의 친구에게 간식을 먹여줬어요"
+    }
+
+    private fun formatDuration (duration: Int): String{
+        var min = duration / 60
+        val sec = duration % 60
+
+        return String.format("%d분 %d초", min, sec)
     }
 
     private fun musicStart() {
