@@ -3,6 +3,7 @@ package com.hs.refrigerator_guard.UI
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Paint
+import android.graphics.Rect
 import android.os.Handler
 import android.provider.SyncStateContract.Helpers.update
 import android.util.Log
@@ -52,17 +53,15 @@ class GameView(context: Context): SurfaceView(context), Runnable {
     fun createEnemies() {
         enemies = ArrayList<Enemy>()
 
-        Thread {
-            enemyHandler.postDelayed(object : Runnable {
-                override fun run() {
-                    try {
-                        newEnemy()
-                        enemyHandler.postDelayed(this, 1000)
-                    } catch (e: Exception) {
+        enemyHandler.postDelayed(object : Runnable {
+            override fun run() {
+                try {
+                    newEnemy()
+                    enemyHandler.postDelayed(this, 1000)
+                } catch (e: Exception) {
                     }
-                }
-            }, 0)
-        }.start()
+            }
+        }, 0)
     }
 
     override fun run() {
@@ -117,12 +116,14 @@ class GameView(context: Context): SurfaceView(context), Runnable {
         val trashEnemy = ArrayList<Enemy>()
 
         for (enemy in enemies) {
-            movingEnemy(enemy, enemy.x, enemy.y)
             enemy.speed = rnd.nextInt(5, 10)
+            movingEnemy(enemy, enemy.x, enemy.y)
 
             if (enemy.y < 0) {
                 trashEnemy.add(enemy)
             }
+
+            eating(enemy)
         }
 
         for (enemy in trashEnemy) {
@@ -139,6 +140,15 @@ class GameView(context: Context): SurfaceView(context), Runnable {
         }
         if (currentX >= 1700) {
             enemy.y -= enemy.speed
+        }
+    }
+
+    private fun eating(enemy: Enemy) {
+        for (food in foods) {
+            if (Rect.intersects(enemy.getShape(), food.getShape())) {
+                enemy.y = -1
+                food.x = windowX + 1
+            }
         }
     }
 

@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Rect
 import com.hs.refrigerator_guard.R
+import com.hs.refrigerator_guard.windowX
 import kotlin.random.Random
 
 class Enemy internal constructor(res: Resources) {
@@ -39,8 +40,8 @@ class Enemy internal constructor(res: Resources) {
         this.height = enemyImg.height
     }
 
-    fun eating(): Rect {
-        return Rect()
+    fun getShape(): Rect {
+        return Rect(x, y, x+ width, y+height)
     }
 
 

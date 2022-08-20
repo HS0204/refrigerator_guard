@@ -4,6 +4,7 @@ import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
+import android.graphics.Rect
 import com.hs.refrigerator_guard.R
 import kotlin.random.Random
 
@@ -12,6 +13,8 @@ class Food internal constructor(res: Resources) {
     // 화면 상 절대좌표 (좌상단 (0,0)에 이미지가 위치함)
     var x: Int = 0
     var y: Int = 0
+    var width: Int = 0
+    var height: Int = 0
 
     var foodImg: Bitmap
 
@@ -31,7 +34,13 @@ class Food internal constructor(res: Resources) {
 
         foodImg = BitmapFactory.decodeResource(res, currentFood)
         foodImg = Bitmap.createScaledBitmap(foodImg, foodImg.width, foodImg.height, true)
+
+        this.width = foodImg.width
+        this.height = foodImg.height
     }
 
+    fun getShape(): Rect {
+        return Rect(x, y, x+ width, y+height)
+    }
 
 }
