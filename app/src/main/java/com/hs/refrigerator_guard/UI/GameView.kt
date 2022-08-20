@@ -64,23 +64,32 @@ class GameView(context: Context): SurfaceView(context), Runnable {
             override fun run() {
                 try {
                     newEnemy()
-                    enemyHandler.postDelayed(this, 1000) /*** 적군 리스폰 속도 ***/
+                    /*** 적군 리스폰 속도 ***/
+                    if (timer < 10)
+                        enemyHandler.postDelayed(this, 1300)
+                    if (timer in 10..19)
+                        enemyHandler.postDelayed(this, 1000)
+                    if (timer in 20..29)
+                        enemyHandler.postDelayed(this, 700)
+                    if (timer >= 30)
+                        enemyHandler.postDelayed(this, 500)
                 } catch (e: Exception) {
                     }
             }
         }, 0)
     }
 
-    val te = Handler()
+    val timerHandler = Handler()
 
     fun countPlayTime() {
+        timer = 0
         Thread{
-            te.postDelayed(object : Runnable {
+            timerHandler.postDelayed(object : Runnable {
                 override fun run() {
                     try {
                         timer++
-                        Log.d("TEST","$timer")
-                        te.postDelayed(this, 1000)
+                        Log.d("TEST","게임 진행 시간: $timer")
+                        timerHandler.postDelayed(this, 1000)
                     } catch (e: Exception) {
                     }
                 }
@@ -131,7 +140,8 @@ class GameView(context: Context): SurfaceView(context), Runnable {
             target = enemies[0]
 
         for (food in foods) {
-            food.speed = rnd.nextInt(5, 7) /*** 슈팅 속도 ***/
+            food.speed = 5 /*** 슈팅 속도 ***/
+            //food.speed = rnd.nextInt(5, 7) /*** 슈팅 속도 ***/
 
             if (food.x > windowX)
                 trashFood.add(food)
@@ -150,7 +160,8 @@ class GameView(context: Context): SurfaceView(context), Runnable {
 
     private fun runningEnemy() {
         for (enemy in enemies) {
-            enemy.speed = rnd.nextInt(10, 13) /*** 적군 속도 ***/
+            enemy.speed = 10 /*** 적군 속도 ***/
+            //enemy.speed = rnd.nextInt(10, 13) /*** 적군 속도 ***/
             movingEnemy(enemy, enemy.x, enemy.y)
 
             if (enemy.y < 0)
@@ -179,20 +190,22 @@ class GameView(context: Context): SurfaceView(context), Runnable {
         for (food in foods) {
             if (Rect.intersects(enemy.getShape(), food.getShape())) {
                 count++
-
                 trashFood.add(food)
-                enemy.y = -1
-                //food.x = windowX + 1
+                trashEnemy.add(enemy)
             }
         }
     }
 
     private fun remove() {
+        foods.removeAll(trashFood)
+        enemies.removeAll(trashEnemy)
+        /*
         for (food in trashFood)
             foods.remove(food)
 
         for (enemy in trashEnemy)
             enemies.remove(enemy)
+         */
     }
 
     private fun draw() {
@@ -226,7 +239,6 @@ class GameView(context: Context): SurfaceView(context), Runnable {
             e.printStackTrace()
         }
     }
-
 
     fun resume() {
         isPlaying = true
