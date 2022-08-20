@@ -36,6 +36,7 @@ class GameActivity : AppCompatActivity() {
         gameView.createBackGround(width = windowX, height = windowY, 0, 0)
         gameView.createShooter(windowX/2 - 60, windowY/2 + 30)
         gameView.createFoods()
+        gameView.createEnemies()
 
         setContentView(gameView)
 

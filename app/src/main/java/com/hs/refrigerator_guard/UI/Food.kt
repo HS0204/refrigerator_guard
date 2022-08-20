@@ -7,7 +7,7 @@ import android.graphics.Matrix
 import com.hs.refrigerator_guard.R
 import kotlin.random.Random
 
-class Food internal constructor(res: Resources, degrees: Float) {
+class Food internal constructor(res: Resources) {
 
     // 화면 상 절대좌표 (좌상단 (0,0)에 이미지가 위치함)
     var x: Int = 0
@@ -27,10 +27,10 @@ class Food internal constructor(res: Resources, degrees: Float) {
 
     init {
         var rnd = Random
-        var currentFood = foodList[rnd.nextInt(0, 6)]
+        var currentFood = foodList[rnd.nextInt(0, 7)]
 
         foodImg = BitmapFactory.decodeResource(res, currentFood)
-        foodImg = Bitmap.createBitmap(foodImg, 0, 0, foodImg.width, foodImg.height, Matrix().apply { postRotate(degrees) }, true)
+        foodImg = Bitmap.createScaledBitmap(foodImg, foodImg.width, foodImg.height, true)
     }
 
 
