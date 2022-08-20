@@ -27,9 +27,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.endBtn?.setOnClickListener {
-            Toast.makeText(this, "3초 뒤 게임을 종료합니다.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "3초 뒤 게임을 종료합니다", Toast.LENGTH_SHORT).show()
             sleep(3000)
-            exitProcess(0)
+            System.exit(0)
         }
 
     }

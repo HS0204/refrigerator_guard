@@ -37,6 +37,7 @@ class GameActivity : AppCompatActivity() {
         gameView.createShooter(windowX/2 - 60, windowY/2 + 30)
         gameView.createFoods()
         gameView.createEnemies()
+        gameView.countPlayTime()
 
         setContentView(gameView)
 
@@ -75,6 +76,7 @@ class GameActivity : AppCompatActivity() {
         super.onDestroy()
         gameMediaPlayer.reset()
         gameMediaPlayer.release()
+        finish()
     }
 
     private fun musicStart() {
@@ -84,6 +86,6 @@ class GameActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        super.onBackPressed() // 나중에 지우기 뒤로 못 가게
+
     }
 }

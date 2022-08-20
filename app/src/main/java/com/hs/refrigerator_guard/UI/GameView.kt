@@ -2,13 +2,16 @@ package com.hs.refrigerator_guard.UI
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.graphics.Paint
 import android.graphics.Rect
 import android.os.Handler
-import android.system.Os.remove
 import android.util.Log
 import android.view.MotionEvent
 import android.view.SurfaceView
+import com.hs.refrigerator_guard.EndingActivity
+import com.hs.refrigerator_guard.count
+import com.hs.refrigerator_guard.timer
 import com.hs.refrigerator_guard.windowX
 import java.lang.Exception
 import kotlin.random.Random
@@ -19,6 +22,7 @@ class GameView(context: Context): SurfaceView(context), Runnable {
     private lateinit var thread: Thread
 
     private var isPlaying: Boolean = false
+    private var isGameOver: Boolean = false
     private lateinit var paint: Paint
 
     private lateinit var background: Background
@@ -35,7 +39,7 @@ class GameView(context: Context): SurfaceView(context), Runnable {
     val enemyHandler = Handler()
     var rnd = Random
 
-    lateinit var target: Enemy
+    var target: Enemy = Enemy(resources)
     val trashFood = ArrayList<Food>()
     val trashEnemy = ArrayList<Enemy>()
 
@@ -67,11 +71,33 @@ class GameView(context: Context): SurfaceView(context), Runnable {
         }, 0)
     }
 
+    val te = Handler()
+
+    fun countPlayTime() {
+        Thread{
+            te.postDelayed(object : Runnable {
+                override fun run() {
+                    try {
+                        timer++
+                        Log.d("TEST","$timer")
+                        te.postDelayed(this, 1000)
+                    } catch (e: Exception) {
+                    }
+                }
+            }, 0)
+        }.start()
+    }
+
     override fun run() {
         while (isPlaying) {
             update()
             draw()
             sleep()
+        }
+
+        if (!isPlaying) {
+            val intent = Intent(context, EndingActivity::class.java)
+            context.startActivity(intent)
         }
     }
 
@@ -131,6 +157,9 @@ class GameView(context: Context): SurfaceView(context), Runnable {
                 trashEnemy.add(enemy)
 
             eating(enemy)
+            if (Rect.intersects(enemy.getShape(), Rect(1600, 300, 1800, 500))) {
+                isGameOver = true
+            }
         }
     }
 
@@ -149,6 +178,8 @@ class GameView(context: Context): SurfaceView(context), Runnable {
     private fun eating(enemy: Enemy) {
         for (food in foods) {
             if (Rect.intersects(enemy.getShape(), food.getShape())) {
+                count++
+
                 trashFood.add(food)
                 enemy.y = -1
                 //food.x = windowX + 1
@@ -170,6 +201,10 @@ class GameView(context: Context): SurfaceView(context), Runnable {
             val canvas = holder.lockCanvas()
 
             canvas.drawBitmap(background.bgImg, background.x.toFloat(), background.y.toFloat(), paint)
+
+            if (isGameOver) {
+                isPlaying = false
+            }
 
             canvas.drawBitmap(shooter.shooting(), shooter.x.toFloat(), shooter.y.toFloat(), paint)
 
